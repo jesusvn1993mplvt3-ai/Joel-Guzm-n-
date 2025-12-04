@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Pedidos</title>
+    <!-- Carga Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuente Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para la tipografía y el scrollbar */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb; /* Fondo claro */
+        }
+        /* Estilo para un scrollbar sutil */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f7f9fb;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Estilos para el modal */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Colores y estilos para los estados de pedido */
+        .status-Nuevo {
+            background-color: #fef3c7; /* Amarillo claro */
+            color: #b45309; /* Marrón */
+            border: 1px solid #fde68a;
+        }
+        .status-Proceso {
+            background-color: #dbeafe; /* Azul claro */
+            color: #1e40af; /* Azul oscuro */
+            border: 1px solid #93c5fd;
+        }
+        .status-Entregado {
+            background-color: #d1fae5; /* Verde claro */
+            color: #065f46; /* Verde oscuro */
+            border: 1px solid #a7f3d0;
+        }
+        .status-Cancelado {
+            background-color: #fee2e2; /* Rojo claro */
+            color: #991b1b; /* Rojo oscuro */
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div id="app" class="p-4 md:p-8 max-w-4xl mx-auto">
+        <!-- Encabezado y Barra de Tareas -->
+        <header class="mb-6 flex justify-between items-center bg-white p-4 rounded-xl shadow-lg">
+            <h1 class="text-3xl font-bold text-gray-800">Sistema de Pedidos</h1>
+            <!-- Botón para Abrir Modal de Nuevo Pedido -->
+            <button onclick="document.getElementById('addOrderModal').classList.remove('hidden')"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Nuevo Pedido
+            </button>
+        </header>
+
+        <!-- Mensaje de Estado (Cargando / Error / Usuario) -->
+        <div id="statusMessage" class="mb-4 p-3 bg-indigo-100 text-indigo-800 rounded-lg shadow-inner text-sm hidden">
+            <!-- El mensaje de estado se inyectará aquí -->
+        </div>
+
+        <!-- ID del Usuario Autenticado (Importante para la colaboración) -->
+        <p class="text-sm text-gray-500 mb-6">
+            <span class="font-semibold">ID de Sesión:</span> <span id="currentUserId" class="break-all">Cargando...</span>
+        </p>
+
+        <!-- Contenedor de la Lista de Pedidos -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Pedidos Pendientes</h2>
+            <div id="ordersList" class="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Los pedidos se cargarán aquí por JavaScript -->
+                <p id="loadingIndicator" class="text-gray-500 col-span-full">Cargando pedidos...</p>
+                <p id="noOrdersMessage" class="text-gray-500 col-span-full hidden">No hay pedidos registrados. ¡Añade el primero!</p>
+            </div>
+        </section>
+
+        <!-- Modal para Añadir/Editar Pedido -->
+        <div id="addOrderModal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-overlay transition-opacity duration-300" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transition-all transform scale-100 duration-300">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4" id="modal-title">Añadir Nuevo Pedido</h3>
+                        <form id="orderForm">
+                            <div class="mb-4">
+                                <label for="clientName" class="block text-sm font-medium text-gray-700">Nombre del Cliente</label>
+                                <input type="text" id="clientName" name="clientName" required
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="product" class="block text-sm font-medium text-gray-700">Producto/Servicio</label>
+                                <input type="text" id="product" name="product" required
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="quantity" class="block text-sm font-medium text-gray-700">Cantidad</label>
+                                <input type="number" id="quantity" name="quantity" required min="1" value="1"
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="status" class="block text-sm font-medium text-gray-700">Estado</label>
+                                <select id="status" name="status"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="Nuevo">Nuevo</option>
+                                    <option value="Proceso">En Proceso</option>
+                                    <option value="Entregado">Entregado</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                </select>
+                            </div>
+
+                            <input type="hidden" id="orderId" name="orderId">
+
+                            <div class="mt-6 flex justify-end space-x-3">
+                                <button type="button" onclick="closeModal()"
+                                        class="py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-150">
+                                    Cancelar
+                                </button>
+                                <button type="submit" id="submitButton"
+                                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200">
+                                    Guardar Pedido
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Firebase y Lógica de la Aplicación -->
+    <script type="module">
+        // Importaciones de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, setDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configuración de Firebase y Variables Globales
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db, auth;
+        let userId = null;
+        let isAuthReady = false;
+
+        // Establecer nivel de log para depuración de Firestore
+        setLogLevel('Debug');
+
+        // Referencias del DOM
+        const ordersList = document.getElementById('ordersList');
+        const form = document.getElementById('orderForm');
+        const statusMessage = document.getElementById('statusMessage');
+        const currentUserIdDisplay = document.getElementById('currentUserId');
+        const modal = document.getElementById('addOrderModal');
+        const modalTitle = document.getElementById('modal-title');
+        const submitButton = document.getElementById('submitButton');
+
+        /**
+         * Inicializa Firebase y maneja la autenticación.
+         */
+        async function initializeAndAuthenticate() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Autenticación usando el token personalizado o de forma anónima
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Listener de cambio de estado de autenticación
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        currentUserIdDisplay.textContent = userId;
+                        isAuthReady = true;
+                        console.log("Usuario autenticado. UID:", userId);
+                        // Una vez autenticado, inicia la escucha de pedidos
+                        setupOrdersListener();
+                    } else {
+                        userId = null;
+                        currentUserIdDisplay.textContent = 'No autenticado';
+                        isAuthReady = true;
+                        console.error("Autenticación fallida o cerrada.");
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error al inicializar Firebase o autenticar:", error);
+                showStatusMessage(`Error crítico al iniciar la app: ${error.message}`, 'bg-red-100 text-red-800');
+            }
+        }
+
+        /**
+         * Muestra mensajes de estado en la UI.
+         * @param {string} message - El mensaje a mostrar.
+         * @param {string} classes - Clases de Tailwind para el estilo (e.g., color).
+         */
+        function showStatusMessage(message, classes = 'bg-indigo-100 text-indigo-800') {
+            statusMessage.textContent = message;
+            statusMessage.className = `mb-4 p-3 rounded-lg shadow-inner text-sm ${classes}`;
+            statusMessage.classList.remove('hidden');
+        }
+
+        /**
+         * Define la ruta de la colección de pedidos (Pública para colaboración).
+         * @returns {string} La ruta de la colección.
+         */
+        function getOrdersCollectionPath() {
+            // Colección pública para que todos los usuarios en esta app la compartan
+            return `artifacts/${appId}/public/data/orders`;
+        }
+
+        /**
+         * Inicia la escucha en tiempo real de los pedidos.
+         */
+        function setupOrdersListener() {
+            if (!isAuthReady || !userId || !db) return; // Esperar a que la autenticación esté lista
+
+            const ordersColRef = collection(db, getOrdersCollectionPath());
+            const q = query(ordersColRef); // Se ordena en el cliente para evitar problemas de índice
+
+            // onSnapshot proporciona actualizaciones en tiempo real
+            onSnapshot(q, (snapshot) => {
+                const orders = [];
+                snapshot.forEach(doc => {
+                    orders.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Ordenar en memoria por timestamp (más reciente primero)
+                orders.sort((a, b) => b.timestamp - a.timestamp);
+
+                renderOrders(orders);
+
+            }, (error) => {
+                console.error("Error al escuchar los pedidos:", error);
+                showStatusMessage(`Error al cargar los pedidos: ${error.message}`, 'bg-red-100 text-red-800');
+            });
+        }
+
+        /**
+         * Renderiza la lista de pedidos.
+         * @param {Array<Object>} orders - Lista de objetos de pedido.
+         */
+        function renderOrders(orders) {
+            document.getElementById('loadingIndicator').classList.add('hidden');
+            ordersList.innerHTML = '';
+            
+            if (orders.length === 0) {
+                document.getElementById('noOrdersMessage').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('noOrdersMessage').classList.add('hidden');
+
+            orders.forEach(order => {
+                const orderDate = order.timestamp ? new Date(order.timestamp * 1000).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : 'N/A';
+
+                const card = document.createElement('div');
+                card.className = 'bg-white p-5 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col justify-between';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-gray-800 break-words">${order.clientName}</h3>
+                            <span class="status-${order.status.replace(/\s/g, '')} text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+                                ${order.status}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-1">Producto: <span class="font-medium text-gray-700">${order.product}</span></p>
+                        <p class="text-gray-600 mb-3">Cantidad: <span class="font-medium text-gray-700">${order.quantity}</span></p>
+                        <p class="text-xs text-gray-400 mb-4">Fecha: ${orderDate}</p>
+                    </div>
+
+                    <div class="flex flex-col space-y-2">
+                        <!-- Selector de Estado Rápido -->
+                        <select onchange="updateOrderStatus('${order.id}', this.value)" 
+                                class="w-full bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg p-2 transition duration-150 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="Nuevo" ${order.status === 'Nuevo' ? 'selected' : ''}>Cambiar a: Nuevo</option>
+                            <option value="Proceso" ${order.status === 'Proceso' ? 'selected' : ''}>Cambiar a: En Proceso</option>
+                            <option value="Entregado" ${order.status === 'Entregado' ? 'selected' : ''}>Cambiar a: Entregado</option>
+                            <option value="Cancelado" ${order.status === 'Cancelado' ? 'selected' : ''}>Cambiar a: Cancelado</option>
+                        </select>
+                        
+                        <div class="flex space-x-2">
+                            <button onclick="editOrder('${order.id}', '${order.clientName}', '${order.product}', ${order.quantity}, '${order.status}')"
+                                    class="flex-1 py-2 px-3 text-sm rounded-lg bg-indigo-500 text-white hover:bg-indigo-600 transition duration-150 shadow-md">
+                                Editar
+                            </button>
+                            <button onclick="deleteOrder('${order.id}', '${order.clientName}')"
+                                    class="flex-1 py-2 px-3 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600 transition duration-150 shadow-md">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                ordersList.appendChild(card);
+            });
+        }
+
+        /**
+         * Maneja el envío del formulario para añadir o actualizar un pedido.
+         */
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!userId) {
+                showStatusMessage('Error: No se ha podido obtener la ID del usuario. Inténtalo de nuevo.', 'bg-red-100 text-red-800');
+                return;
+            }
+
+            const formData = new FormData(form);
+            const orderId = formData.get('orderId');
+            const clientName = formData.get('clientName');
+            const product = formData.get('product');
+            const quantity = parseInt(formData.get('quantity'));
+            const status = formData.get('status');
+            
+            // Verificar datos mínimos
+            if (!clientName || !product || isNaN(quantity) || quantity <= 0) {
+                 showStatusMessage('Por favor, rellena todos los campos correctamente.', 'bg-yellow-100 text-yellow-800');
+                 return;
+            }
+
+            const orderData = {
+                userId: userId, // Quién creó/modificó el pedido
+                clientName: clientName,
+                product: product,
+                quantity: quantity,
+                status: status,
+                // serverTimestamp no es compatible con el ordenamiento en memoria, 
+                // usamos un timestamp de JS simple en segundos para ordenar
+                timestamp: Math.floor(Date.now() / 1000) 
+            };
+            
+            closeModal();
+            showStatusMessage('Guardando pedido, por favor espera...', 'bg-blue-100 text-blue-800');
+
+            try {
+                if (orderId) {
+                    // Actualizar pedido existente
+                    const orderDocRef = doc(db, getOrdersCollectionPath(), orderId);
+                    await setDoc(orderDocRef, orderData, { merge: true });
+                    showStatusMessage(`Pedido de ${clientName} actualizado con éxito.`, 'bg-green-100 text-green-800');
+                } else {
+                    // Añadir nuevo pedido
+                    await addDoc(collection(db, getOrdersCollectionPath()), orderData);
+                    showStatusMessage(`Nuevo pedido para ${clientName} añadido con éxito.`, 'bg-green-100 text-green-800');
+                }
+                form.reset(); // Limpiar formulario
+            } catch (error) {
+                console.error("Error al guardar el pedido:", error);
+                showStatusMessage(`Error al guardar el pedido: ${error.message}`, 'bg-red-100 text-red-800');
+            }
+        });
+
+        /**
+         * Abre el modal en modo edición y precarga los datos.
+         * @param {string} id - ID del documento de Firestore.
+         * @param {string} name - Nombre del cliente.
+         * @param {string} product - Producto/Servicio.
+         * @param {number} quantity - Cantidad.
+         * @param {string} status - Estado actual.
+         */
+        window.editOrder = (id, name, product, quantity, status) => {
+            modalTitle.textContent = 'Editar Pedido';
+            submitButton.textContent = 'Guardar Cambios';
+            document.getElementById('orderId').value = id;
+            document.getElementById('clientName').value = name;
+            document.getElementById('product').value = product;
+            document.getElementById('quantity').value = quantity;
+            document.getElementById('status').value = status;
+            modal.classList.remove('hidden');
+        };
+
+        /**
+         * Actualiza el estado de un pedido directamente desde el selector.
+         * @param {string} id - ID del documento de Firestore.
+         * @param {string} newStatus - Nuevo estado.
+         */
+        window.updateOrderStatus = async (id, newStatus) => {
+            if (!userId) return showStatusMessage('Error de autenticación.', 'bg-red-100 text-red-800');
+            
+            try {
+                const orderDocRef = doc(db, getOrdersCollectionPath(), id);
+                await setDoc(orderDocRef, { 
+                    status: newStatus,
+                    timestamp: Math.floor(Date.now() / 1000) // Actualizar timestamp para reordenar
+                }, { merge: true });
+                showStatusMessage(`Estado del pedido ${id.substring(0, 4)}... cambiado a ${newStatus}.`, 'bg-green-100 text-green-800');
+            } catch (error) {
+                console.error("Error al actualizar estado:", error);
+                showStatusMessage(`Error al actualizar estado: ${error.message}`, 'bg-red-100 text-red-800');
+            }
+        };
+
+        /**
+         * Elimina un pedido. Utiliza un modal personalizado simple para confirmar.
+         * @param {string} id - ID del documento de Firestore.
+         * @param {string} clientName - Nombre del cliente para la confirmación.
+         */
+        window.deleteOrder = async (id, clientName) => {
+            // Implementación de modal de confirmación simple (reemplazo de window.confirm)
+            const confirmation = window.prompt(`¿Estás seguro de que deseas eliminar el pedido de ${clientName}? Escribe 'SI' para confirmar.`);
+
+            if (confirmation === 'SI') {
+                if (!userId) return showStatusMessage('Error de autenticación.', 'bg-red-100 text-red-800');
+                
+                showStatusMessage(`Eliminando pedido de ${clientName}...`, 'bg-yellow-100 text-yellow-800');
+                try {
+                    await deleteDoc(doc(db, getOrdersCollectionPath(), id));
+                    showStatusMessage(`Pedido de ${clientName} eliminado con éxito.`, 'bg-green-100 text-green-800');
+                } catch (error) {
+                    console.error("Error al eliminar el pedido:", error);
+                    showStatusMessage(`Error al eliminar: ${error.message}`, 'bg-red-100 text-red-800');
+                }
+            } else if (confirmation !== null) {
+                showStatusMessage(`Eliminación cancelada.`, 'bg-gray-100 text-gray-800');
+            }
+        };
+
+
+        /**
+         * Cierra el modal y restablece el formulario a modo "Añadir".
+         */
+        window.closeModal = () => {
+            modal.classList.add('hidden');
+            form.reset();
+            document.getElementById('orderId').value = '';
+            modalTitle.textContent = 'Añadir Nuevo Pedido';
+            submitButton.textContent = 'Guardar Pedido';
+            // Ocultar cualquier mensaje de error previo si el formulario se cierra
+            statusMessage.classList.add('hidden'); 
+        };
+
+        // Inicia la aplicación al cargar la ventana
+        window.onload = initializeAndAuthenticate;
+    </script>
+</body>
+</html>
