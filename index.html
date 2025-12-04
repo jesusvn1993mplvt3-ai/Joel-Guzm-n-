@@ -154,7 +154,7 @@
         import { getFirestore, doc, addDoc, setDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Configuración de Firebase y Variables Globales
+        // Configuración de Firebase y Variables Globales (MANDATORIAS)
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
@@ -180,6 +180,7 @@
          */
         async function initializeAndAuthenticate() {
             try {
+                // Inicializa Firebase con la configuración proporcionada por el entorno
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
@@ -352,8 +353,7 @@
                 product: product,
                 quantity: quantity,
                 status: status,
-                // serverTimestamp no es compatible con el ordenamiento en memoria, 
-                // usamos un timestamp de JS simple en segundos para ordenar
+                // Usamos un timestamp de JS simple en segundos para ordenar en el cliente
                 timestamp: Math.floor(Date.now() / 1000) 
             };
             
@@ -380,11 +380,6 @@
 
         /**
          * Abre el modal en modo edición y precarga los datos.
-         * @param {string} id - ID del documento de Firestore.
-         * @param {string} name - Nombre del cliente.
-         * @param {string} product - Producto/Servicio.
-         * @param {number} quantity - Cantidad.
-         * @param {string} status - Estado actual.
          */
         window.editOrder = (id, name, product, quantity, status) => {
             modalTitle.textContent = 'Editar Pedido';
@@ -399,8 +394,6 @@
 
         /**
          * Actualiza el estado de un pedido directamente desde el selector.
-         * @param {string} id - ID del documento de Firestore.
-         * @param {string} newStatus - Nuevo estado.
          */
         window.updateOrderStatus = async (id, newStatus) => {
             if (!userId) return showStatusMessage('Error de autenticación.', 'bg-red-100 text-red-800');
@@ -420,8 +413,6 @@
 
         /**
          * Elimina un pedido. Utiliza un modal personalizado simple para confirmar.
-         * @param {string} id - ID del documento de Firestore.
-         * @param {string} clientName - Nombre del cliente para la confirmación.
          */
         window.deleteOrder = async (id, clientName) => {
             // Implementación de modal de confirmación simple (reemplazo de window.confirm)
@@ -462,3 +453,4 @@
     </script>
 </body>
 </html>
+
