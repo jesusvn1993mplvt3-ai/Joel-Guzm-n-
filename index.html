@@ -3,259 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GUZMÁN - Control de Producción</title>
+    <title>Taller GUZMÁN - Control de Maquila</title>
     
-    <meta property="og:title" content="GUZMÁN - Fashion & Production">
-    <meta property="og:description" content="Gestión exclusiva de producción y venta de ropa. Joel Guzmán.">
-    <meta property="og:image" content="https://ui-avatars.com/api/?name=Joel+Guzman&background=000000&color=ffffff&size=512&font-size=0.35&length=2">
+    <meta property="og:title" content="Taller de Confección GUZMÁN">
+    <meta property="og:description" content="Gestión profesional de órdenes de producción, corte y confección.">
+    <meta property="og:image" content="https://ui-avatars.com/api/?name=Joel+Guzman&background=2c3e50&color=ecf0f1&size=512&font-size=0.35&length=2&rounded=false">
     <meta property="og:url" content="https://joel-guzman.web.app">
     <meta property="og:type" content="website">
 
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         :root {
-            --primary: #1a1a1a;
-            --accent: #d4af37; /* Dorado elegante */
-            --bg: #f9f9f9;
-            --white: #ffffff;
-            --shadow: 0 4px 20px rgba(0,0,0,0.05);
+            --primary: #2c3e50; /* Azul Acero Industrial */
+            --accent: #e67e22; /* Naranja Seguridad (típico de industria) */
+            --success: #27ae60;
+            --bg: #ecf0f1;
+            --card-bg: #ffffff;
         }
 
         body {
-            font-family: 'Lato', sans-serif;
+            font-family: 'Roboto', sans-serif;
             background-color: var(--bg);
             margin: 0;
-            color: var(--primary);
+            color: #333;
+            padding-bottom: 50px;
         }
 
-        /* Header & Logo */
+        /* HEADER INDUSTRIAL */
         header {
-            background: var(--white);
-            padding: 2rem 1rem;
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem 1rem;
             text-align: center;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .brand-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            letter-spacing: 0.3em;
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            color: var(--primary);
             margin: 0;
-            border-bottom: 2px solid var(--primary);
+            border: 2px solid rgba(255,255,255,0.2);
             display: inline-block;
-            padding-bottom: 5px;
+            padding: 5px 15px;
         }
 
         .brand-subtitle {
-            font-size: 0.8rem;
-            letter-spacing: 0.2em;
-            margin-top: 10px;
-            color: #666;
-            text-transform: uppercase;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 8px;
+            letter-spacing: 1px;
         }
 
-        /* Contenedor Principal */
         .container {
             max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            margin: 20px auto;
+            padding: 0 15px;
         }
 
-        /* Tarjetas */
+        /* TARJETAS */
         .card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
-            border-top: 4px solid var(--primary);
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
         }
 
         h2 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Oswald', sans-serif;
+            color: var(--primary);
             margin-top: 0;
-            border-bottom: 1px solid #eee;
+            border-bottom: 2px solid #f0f0f0;
             padding-bottom: 10px;
         }
 
-        /* Formularios */
-        .form-group {
-            margin-bottom: 1rem;
+        /* FORMULARIO */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group.full { grid-column: span 2; }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 5px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            color: #555;
+            text-transform: uppercase;
         }
 
-        input, select {
+        input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
             box-sizing: border-box;
-            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
         }
 
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        /* Botones */
         .btn {
             background: var(--primary);
-            color: var(--white);
+            color: white;
             border: none;
-            padding: 12px 24px;
-            cursor: pointer;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            transition: all 0.3s;
+            padding: 12px;
             width: 100%;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
             border-radius: 4px;
+            transition: 0.3s;
         }
 
-        .btn:hover {
-            background: #000;
-            transform: translateY(-2px);
+        .btn:hover { background: #34495e; }
+
+        /* LISTA DE ÓRDENES */
+        .order-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
         }
 
-        .btn-sell {
-            background: var(--accent);
-            padding: 5px 15px;
-            font-size: 0.8rem;
-            width: auto;
-        }
-
-        /* Lista de Inventario */
-        .inventory-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .item-card {
+        .order-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid #eee;
+            align-items: flex-start;
         }
 
-        .item-info h3 {
-            margin: 0;
-            font-size: 1.1rem;
-        }
-
-        .item-details {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 4px;
-        }
-
-        .stock-badge {
-            background: #eee;
-            padding: 4px 8px;
-            border-radius: 4px;
+        .order-title {
             font-weight: bold;
-            font-size: 0.8rem;
+            font-size: 1.1rem;
+            color: var(--primary);
         }
 
-        .loading {
-            text-align: center;
-            color: #999;
-            font-style: italic;
+        .order-meta {
+            font-size: 0.85rem;
+            color: #777;
+            margin: 5px 0;
+        }
+
+        /* BARRA DE PROGRESO */
+        .progress-container {
+            background: #eee;
+            height: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .btn-update {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 10px;
         }
         
-        /* Notificaciones */
-        #notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--primary);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            display: none;
-            animation: slideIn 0.5s ease;
-        }
+        .money { color: var(--success); }
 
-        @keyframes slideIn {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
+        .loading { text-align: center; padding: 20px; color: #777; }
 
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 2rem;
-            color: #888;
-            font-size: 0.8rem;
-        }
     </style>
 </head>
 <body>
 
     <header>
         <h1 class="brand-logo">GUZMÁN</h1>
-        <div class="brand-subtitle">Clothing & Production Control</div>
+        <div class="brand-subtitle">MAQUILA & CONFECCIÓN</div>
     </header>
 
     <div class="container">
+        
         <div class="card">
-            <h2><i class="fas fa-plus-circle"></i> Nueva Producción</h2>
-            <form id="addForm">
+            <h2><i class="fas fa-tshirt"></i> Nueva Orden de Corte</h2>
+            <form id="maquilaForm">
                 <div class="form-group">
-                    <label>Prenda</label>
-                    <input type="text" id="itemName" placeholder="Ej. Camiseta Oversize Negra" required>
+                    <label>Modelo / Descripción</label>
+                    <input type="text" id="modelo" placeholder="Ej. Uniforme Secundaria #12" required>
                 </div>
-                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div>
-                        <label>Cantidad (Stock)</label>
-                        <input type="number" id="itemQty" placeholder="0" required>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <input type="text" id="cliente" placeholder="Nombre del cliente" required>
                     </div>
-                    <div>
-                        <label>Precio de Venta ($)</label>
-                        <input type="number" id="itemPrice" placeholder="0.00" required>
+                    <div class="form-group">
+                        <label>Piezas Totales</label>
+                        <input type="number" id="totalPiezas" placeholder="Ej. 100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio Maquila (pza)</label>
+                        <input type="number" step="0.50" id="precioUnitario" placeholder="$0.00" required>
                     </div>
                 </div>
-                <button type="submit" class="btn">Registrar en Inventario</button>
+
+                <button type="submit" class="btn">Registrar Orden</button>
             </form>
         </div>
 
-        <div class="card">
-            <h2><i class="fas fa-layer-group"></i> Inventario Actual</h2>
-            <div id="loadingMsg" class="loading">Cargando datos de Firebase...</div>
-            <ul id="inventoryList" class="inventory-list">
-                </ul>
+        <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+            <h2 style="color: var(--primary); border-bottom: 2px solid #ccc; padding-bottom:10px;">
+                <i class="fas fa-tasks"></i> Producción en Curso
+            </h2>
+            <div id="loading" class="loading">Cargando órdenes...</div>
+            <div id="ordersList">
+                </div>
         </div>
     </div>
 
-    <div id="notification"></div>
-
-    <footer>
-        <p>Sistema desarrollado para Joel Guzmán &copy; 2025</p>
-    </footer>
-
     <script type="module">
-        // Importamos Firebase desde CDN para no necesitar node_modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 
-        // Configuración proporcionada
         const firebaseConfig = {
             apiKey: "AIzaSyBK7Q-fCS-aUlN-xzmWPfpacz6brPK8RSg",
             authDomain: "joel-guzman.firebaseapp.com",
@@ -266,102 +253,122 @@
             measurementId: "G-RTBBQMGE9S"
         };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const db = getFirestore(app); // Inicializamos la base de datos
+        const db = getFirestore(app);
 
-        // Referencia al formulario y lista
-        const addForm = document.getElementById('addForm');
-        const inventoryList = document.getElementById('inventoryList');
-        const loadingMsg = document.getElementById('loadingMsg');
+        const form = document.getElementById('maquilaForm');
+        const list = document.getElementById('ordersList');
+        const loading = document.getElementById('loading');
 
-        // FUNCIÓN 1: Agregar Producto a Firestore
-        addForm.addEventListener('submit', async (e) => {
+        // 1. CREAR NUEVA ORDEN
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const name = document.getElementById('itemName').value;
-            const qty = parseInt(document.getElementById('itemQty').value);
-            const price = parseFloat(document.getElementById('itemPrice').value);
+            const modelo = document.getElementById('modelo').value;
+            const cliente = document.getElementById('cliente').value;
+            const total = parseInt(document.getElementById('totalPiezas').value);
+            const precio = parseFloat(document.getElementById('precioUnitario').value);
 
             try {
-                await addDoc(collection(db, "ropa"), {
-                    nombre: name,
-                    stock: qty,
-                    precio: price,
-                    fecha: new Date()
+                await addDoc(collection(db, "ordenes_maquila"), {
+                    modelo: modelo,
+                    cliente: cliente,
+                    total: total,
+                    hechas: 0, // Inicia en 0
+                    precio: precio,
+                    fecha: new Date(),
+                    activo: true
                 });
-                
-                showNotification(`"${name}" agregado exitosamente.`);
-                addForm.reset();
+                form.reset();
+                alert("Orden registrada correctamente");
             } catch (error) {
-                console.error("Error al agregar: ", error);
-                alert("Hubo un error al guardar. Revisa la consola.");
+                console.error("Error:", error);
+                alert("Error al registrar");
             }
         });
 
-        // FUNCIÓN 2: Leer Inventario en Tiempo Real
-        // Esto escucha cambios en la base de datos automáticamente
-        const q = collection(db, "ropa");
-        onSnapshot(q, (snapshot) => {
-            inventoryList.innerHTML = ""; // Limpiar lista
-            loadingMsg.style.display = "none";
+        // 2. LEER ÓRDENES EN TIEMPO REAL
+        onSnapshot(collection(db, "ordenes_maquila"), (snapshot) => {
+            list.innerHTML = "";
+            loading.style.display = "none";
 
             if (snapshot.empty) {
-                inventoryList.innerHTML = "<p style='text-align:center'>No hay ropa en inventario aún.</p>";
+                list.innerHTML = "<p style='text-align:center'>No hay producción pendiente.</p>";
+                return;
             }
 
-            snapshot.forEach((docSnap) => {
-                const item = docSnap.data();
-                const id = docSnap.id;
+            // Convertimos a array y ordenamos por fecha (más nuevo arriba)
+            let docs = [];
+            snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+            docs.sort((a, b) => b.fecha - a.fecha);
 
-                const li = document.createElement('li');
-                li.className = 'item-card';
-                li.innerHTML = `
-                    <div class="item-info">
-                        <h3>${item.nombre}</h3>
-                        <div class="item-details">
-                            Precio: $${item.precio} | <span class="stock-badge">Stock: ${item.stock}</span>
+            docs.forEach(item => {
+                if(!item.activo) return; // Opcional: ocultar las terminadas
+
+                const porcentaje = Math.min(100, Math.round((item.hechas / item.total) * 100));
+                const ganancia = (item.hechas * item.precio).toFixed(2);
+                
+                // Color de barra según avance
+                let barColor = 'var(--accent)';
+                if(porcentaje > 50) barColor = '#f1c40f'; // Amarillo
+                if(porcentaje >= 100) barColor = 'var(--success)'; // Verde
+
+                const div = document.createElement('div');
+                div.className = 'order-card';
+                div.innerHTML = `
+                    <div class="order-header">
+                        <div>
+                            <div class="order-title">${item.modelo}</div>
+                            <div class="order-meta"><i class="fas fa-user"></i> ${item.cliente} | $${item.precio}/pza</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div class="money">$${ganancia}</div>
+                            <small>Generado</small>
                         </div>
                     </div>
-                    <div>
-                        ${item.stock > 0 
-                            ? `<button class="btn btn-sell" onclick="venderItem('${id}', '${item.nombre}')">Vender 1</button>` 
-                            : `<span style="color:red; font-size:0.8rem">AGOTADO</span>`
+
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: ${porcentaje}%; background: ${barColor}"></div>
+                    </div>
+
+                    <div class="stats">
+                        <span>${item.hechas} / ${item.total} pzas</span>
+                        <span>${porcentaje}%</span>
+                    </div>
+
+                    <div style="margin-top:10px; display:flex; gap:10px;">
+                        ${item.hechas < item.total ? 
+                            `<button class="btn-update" onclick="sumarPiezas('${item.id}', '${item.modelo}')">
+                                <i class="fas fa-plus"></i> Registrar Avance
+                            </button>` 
+                            : 
+                            `<div style="color:green; font-weight:bold; padding:8px 0;"><i class="fas fa-check-circle"></i> COMPLETADO</div>`
                         }
                     </div>
                 `;
-                inventoryList.appendChild(li);
+                list.appendChild(div);
             });
         });
 
-        // FUNCIÓN 3: Registrar Venta (Disminuir Stock)
-        // Hacemos esta función global para que el HTML pueda llamarla
-        window.venderItem = async (id, nombre) => {
-            if(confirm(`¿Confirmar venta de 1 unidad de "${nombre}"?`)) {
-                const itemRef = doc(db, "ropa", id);
-                
+        // 3. ACTUALIZAR AVANCE (Función Global)
+        window.sumarPiezas = async (id, nombre) => {
+            // Preguntamos cuántas piezas se hicieron (ej: un paquete de 10)
+            const cantidad = prompt(`¿Cuántas piezas de "${nombre}" se terminaron hoy?`, "10");
+            
+            if (cantidad != null && parseInt(cantidad) > 0) {
+                const num = parseInt(cantidad);
                 try {
-                    await updateDoc(itemRef, {
-                        stock: increment(-1) // Resta 1 al stock atómicamente
+                    const ref = doc(db, "ordenes_maquila", id);
+                    await updateDoc(ref, {
+                        hechas: increment(num)
                     });
-                    showNotification("Venta registrada. Stock actualizado.");
                 } catch (error) {
-                    console.error("Error al vender: ", error);
-                    alert("Error al procesar la venta.");
+                    console.error("Error:", error);
+                    alert("No se pudo actualizar el avance.");
                 }
             }
         };
 
-        // Utilidad: Notificaciones
-        function showNotification(msg) {
-            const notif = document.getElementById('notification');
-            notif.innerText = msg;
-            notif.style.display = 'block';
-            setTimeout(() => {
-                notif.style.display = 'none';
-            }, 3000);
-        }
     </script>
 </body>
 </html>
